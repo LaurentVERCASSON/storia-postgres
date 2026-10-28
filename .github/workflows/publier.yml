@@ -1,0 +1,33 @@
+# Construit et publie l'image PostgreSQL sans gosu des bases de storia gérées par Coolify
+# (L'Arbre aux mille mots). Coolify retire l'image du registre avant chaque démarrage d'une
+# base autonome : une image construite sur le serveur seul ne suffit pas.
+# La reconstruction hebdomadaire reprend les correctifs Alpine (apk upgrade du Dockerfile).
+name: publier
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+jobs:
+  image:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+      - uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        with:
+          context: .
+          push: true
+          provenance: false
+          labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          tags: |
+            ghcr.io/laurentvercasson/storia-postgres:18.6-alpine
+            ghcr.io/laurentvercasson/storia-postgres:18.6-alpine-${{ github.run_number }}
