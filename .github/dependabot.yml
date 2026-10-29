@@ -1,0 +1,36 @@
+# Modèle Lv2c du fichier .github/dependabot.yml — rempli par scripts/dependabot-deployer.sh.
+# Le script détecte les dossiers qui portent un manifeste (pip, npm, Dockerfile, workflows
+# GitHub) et répète le bloc ENTRE les marqueurs ci-dessous une fois par couple
+# (écosystème, dossier). Ce qui est hors des marqueurs est recopié tel quel.
+#
+# Pourquoi ces réglages :
+#   • le lundi matin : les PR arrivent en début de semaine, pas un vendredi soir ;
+#   • mineures et correctifs regroupés en UNE PR par écosystème et dossier : quinze PR d'un
+#     coup finissent fermées sans être lues ; les majeures restent à part, elles cassent ;
+#   • open-pull-requests-limit 5 : au-delà, la file de PR devient un bruit de fond.
+# Les alertes de sécurité Dependabot, elles, ne dépendent pas de ce fichier : elles sont
+# vérifiées par scripts/secu-couverture-check.sh.
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    groups:
+      mineures-et-correctifs:
+        update-types: ["minor", "patch"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    groups:
+      mineures-et-correctifs:
+        update-types: ["minor", "patch"]
