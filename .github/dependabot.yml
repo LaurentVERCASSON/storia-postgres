@@ -7,7 +7,18 @@
 #   • le lundi matin : les PR arrivent en début de semaine, pas un vendredi soir ;
 #   • mineures et correctifs regroupés en UNE PR par écosystème et dossier : quinze PR d'un
 #     coup finissent fermées sans être lues ; les majeures restent à part, elles cassent ;
-#   • open-pull-requests-limit 5 : au-delà, la file de PR devient un bruit de fond.
+#   • open-pull-requests-limit 5 : au-delà, la file de PR devient un bruit de fond ;
+#   • majeures regroupées elles aussi en UNE PR par écosystème et dossier : le premier passage
+#     du 29/10/2026 a ouvert 235 PR de version majeure sur 428, une par paquet ;
+#   • images Docker : versions majeures ignorées (bloc ignore posé par le script).
+#     Monter postgres ou redis d'une majeure exige une migration des données, et node pair
+#     ou impair se choisit à la main (LTS). Sans risque pour la sécurité : Dependabot n'émet
+#     aucune alerte sur une image, c'est secu-images-check.sh qui les surveille.
+#     Ailleurs, JAMAIS d'ignore sur les majeures : `ignore` s'applique aussi aux mises à
+#     jour de sécurité, et un correctif n'existe parfois qu'en version majeure (pytest 9,
+#     react-router 7 en octobre 2026).
+# Les groupes ne valent que pour les mises à jour de version (applies-to par défaut) : une
+# mise à jour de sécurité arrive toujours seule, dans sa propre PR.
 # Les alertes de sécurité Dependabot, elles, ne dépendent pas de ce fichier : elles sont
 # vérifiées par scripts/secu-couverture-check.sh.
 version: 2
@@ -23,6 +34,11 @@ updates:
     groups:
       mineures-et-correctifs:
         update-types: ["minor", "patch"]
+      majeures:
+        update-types: ["major"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -34,3 +50,5 @@ updates:
     groups:
       mineures-et-correctifs:
         update-types: ["minor", "patch"]
+      majeures:
+        update-types: ["major"]
