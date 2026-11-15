@@ -1,7 +1,7 @@
 # Image PostgreSQL de la pile, épinglée par condensat et construite ici plutôt que tirée telle
 # quelle : l'image officielle porte des failles HIGH et CRITICAL corrigeables que la veille de
 # storia relève (analyse du 28/10/2026), et qu'aucune version publiée ne ferme encore.
-FROM postgres:18.6-alpine@sha256:10a5c69a83035ab5239f5620d708520e8b28f5aa1f2b20143e6024532edadfb5
+FROM postgres:18.6-alpine@sha256:9ba53c7d41ea093baf5c1ba635ba5434c4f979880527d49bb7d9237d3193085b
 
 # L'image officielle tarde à reprendre les correctifs Alpine : brotli-libs (CVE-2026-111497) le
 # 28/10/2026, puis krb5-libs et libxslt (CVE-2026-125350, toutes deux au catalogue KEV) le
